@@ -1,0 +1,59 @@
+================================================================
+PROJECT DICTIONARY & FUNCTION REGISTRY
+================================================================
+FORMAT: [Date] | Item Name | Path | Purpose | Dependencies | Bugs
+
+[2026-11-01] | memory.txt           | /                                     | Project laws, state, constraints                     | N/A | N/A
+[2026-11-01] | Dictionary.txt       | /                                     | Master registry                                      | N/A | N/A
+[2026-11-01] | package.json         | /                                     | npm manifest (vite, react, supabase, zustand, gh-pages) | N/A | N/A
+[2026-11-01] | tsconfig.json        | /                                     | Strict TS, React JSX, ES2022                         | N/A | N/A
+[2026-11-01] | vite.config.ts       | /                                     | base="/TNP_PQ_CRD/", react plugin                    | vite | N/A
+[2026-11-01] | index.html           | /                                     | Mount point + @page defaults                         | N/A | N/A
+[2026-11-01] | .env.example         | /                                     | Supabase env var template                            | N/A | N/A
+[2026-11-01] | .github/workflows/deploy.yml | /.github/workflows            | GH Pages auto-deploy                                 | GH Actions | N/A
+
+CORE
+[2026-11-01] | main.tsx             | /src                                  | Boot React + router                                  | App, theme.css | N/A
+[2026-11-01] | App.tsx              | /src/app                              | Session gate + ambience + routes                     | auth, audio_ambience, routes, SignInGate | N/A
+[2026-11-01] | routes.tsx           | /src/app                              | Route map                                            | react-router-dom | N/A
+[2026-11-01] | theme.css            | /src/app                              | Design tokens (parchment, candle, wax, woodcut)      | N/A | N/A
+[2026-11-01] | SignInGate.tsx       | /src/app                              | Magic-link + invite redemption UI                    | auth | N/A
+[2026-11-01] | vite-env.d.ts        | /src                                  | ImportMetaEnv types                                  | vite | N/A
+
+LIB
+[2026-11-01] | supabase.ts          | /src/lib                              | Supabase client singleton                            | @supabase/supabase-js | N/A
+[2026-11-01] | auth.ts              | /src/lib                              | send_magic_link, get_current_session, subscribe_to_auth_state, redeem_invite_code | supabase.ts | N/A
+[2026-11-01] | db_families.ts       | /src/lib                              | list/create/update families; members CRUD; mark_member_vacant | supabase.ts | N/A
+[2026-11-01] | db_rituals.ts        | /src/lib                              | list/create/update/delete rituals; master catalog     | supabase.ts | N/A
+[2026-11-01] | db_towns.ts          | /src/lib                              | list_my_towns, create_town, create_invite, list_invites | supabase.ts | N/A
+[2026-11-01] | print_tiler.ts       | /src/lib                              | open_print_window_with_tiled_cards (8.5x11 bleed+cut) | N/A | N/A
+[2026-11-01] | audio_ambience.ts    | /src/lib                              | start_ambience_loop, play_one_shot_sound_effect       | N/A | N/A
+
+WRIT COMPONENTS
+[2026-11-01] | WritView.tsx         | /src/components/writ                  | Charter sheet renderer                                | db_families, FamilyStability, LarderTracker, WaxSealSave | N/A
+[2026-11-01] | FamilyStability.tsx  | /src/components/writ                  | Vacancy slot visual                                   | db_families | N/A
+[2026-11-01] | LarderTracker.tsx    | /src/components/writ                  | +/- ration counter                                    | db_families | N/A
+[2026-11-01] | WritDirectory.tsx    | /src/components/writ                  | Town index of families                                | db_towns, db_families | N/A
+
+RITUAL COMPONENTS
+[2026-11-01] | RitualDeck.tsx       | /src/components/ritual                | Family's ritual grid                                  | db_rituals, RitualCard | N/A
+[2026-11-01] | RitualCard.tsx       | /src/components/ritual                | Unified card layout                                   | RitualIcons, RitualBorder | N/A
+[2026-11-01] | RitualIcons.tsx      | /src/components/ritual                | Quick-ref glyph row                                   | db_rituals types | N/A
+[2026-11-01] | RitualBorder.tsx     | /src/components/ritual                | Border + condition-variant frame                      | db_rituals types | N/A
+
+LIBRARY COMPONENTS
+[2026-11-01] | ScribeDesk.tsx       | /src/components/library               | Editor shell: catalog, preview, deck builder, print   | db_rituals, db_families, db_towns, RitualCard, Inkwell, Quill, Candle, DeckBuilder, StampForPrint | N/A
+[2026-11-01] | Inkwell.tsx          | /src/components/library               | Ink color swatch picker                               | N/A | N/A
+[2026-11-01] | Quill.tsx            | /src/components/library               | Font family picker                                    | N/A | N/A
+[2026-11-01] | Candle.tsx           | /src/components/library               | Brightness slider                                     | N/A | N/A
+[2026-11-01] | DeckBuilder.tsx      | /src/components/library               | Drag-drop ritual -> family                            | db_rituals | N/A
+[2026-11-01] | StampForPrint.tsx    | /src/components/library               | Serialize + hand off to print_tiler                   | print_tiler | N/A
+
+FX COMPONENTS
+[2026-11-01] | WaxSealSave.tsx      | /src/components/fx                    | Wax-seal save confirmation                            | audio_ambience | N/A
+
+DB
+[2026-11-01] | schema.sql           | /supabase                             | Tables + RLS + join_town_by_invite RPC (applied)      | Supabase | N/A
+[2026-11-01] | config.toml          | /supabase                             | supabase CLI project config                           | Supabase CLI | N/A
+[2026-11-01] | migrations/*_init.sql| /supabase/migrations                  | Timestamped copy of schema used by db push            | Supabase CLI | N/A
+[2026-11-01] | .env                 | /                                     | VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY (not tracked) | N/A | N/A

@@ -1,0 +1,52 @@
+/* ============================================================
+   FILE: src/app/theme.css
+   PURPOSE: Parchment + candlelight + woodcut design tokens.
+   ------------------------------------------------------------
+   ASCII FLOW:
+     :root tokens -> global body -> component classes consume
+   ============================================================ */
+:root {
+  --parchment-base: #e9d9b2;
+  --parchment-shadow: #b89a6a;
+  --ink-black: #1a140d;
+  --ink-blood: #6a0e0e;
+  --ink-bone: #ede3cc;
+  --candle-glow: #f4c56a;
+  --wax-red: #7a1818;
+  --woodcut-stroke: #2a1d10;
+  --font-charter: "IM Fell English", "Cormorant Garamond", Georgia, serif;
+  --font-ritual: "UnifrakturCook", "Luminari", serif;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at 50% 40%, #2b1f12 0%, #0b0804 90%);
+  color: var(--ink-black);
+  font-family: var(--font-charter);
+}
+
+.parchment-splash {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  color: var(--candle-glow);
+  font-family: var(--font-ritual);
+  font-size: 1.4rem;
+  letter-spacing: 0.05em;
+}
+
+.candle-hover {
+  transition: box-shadow 180ms ease, filter 180ms ease;
+}
+.candle-hover:hover {
+  box-shadow: 0 0 24px 4px rgba(244, 197, 106, 0.45);
+  filter: brightness(1.08);
+}
+
+.parchment-sheet {
+  background: var(--parchment-base);
+  background-image: radial-gradient(circle at 20% 10%, rgba(0,0,0,0.08) 0%, transparent 40%);
+  border: 1px solid var(--parchment-shadow);
+  box-shadow: 0 0 60px rgba(0,0,0,0.5);
+  padding: 2rem;
+}

@@ -1,0 +1,6 @@
+node_modules
+dist
+.env
+.env.local
+_scratch_plan.txt
+.DS_Store

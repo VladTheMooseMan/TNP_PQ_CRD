@@ -1,0 +1,58 @@
+================================================================
+PROJECT MEMORY — PQ_Sys
+================================================================
+Session Start: 2026-11-01
+Active Task: Supabase linked, schema pushed, .env populated. Ready to install npm deps and run dev.
+
+Pending Logic Debt:
+  - PageTurn.tsx + CandleHover.tsx not yet implemented (candle-hover
+    css class present; dedicated components deferred until needed).
+  - Starter audio assets (ambience_dark_woods.mp3, wax_sizzle.mp3,
+    page_turn.mp3) must be dropped into /public/assets/audio/.
+  - Woodcut starter art pack must be dropped into /public/assets/woodcuts/.
+
+Gotchas Discovered:
+  - GitHub Pages free tier requires a PUBLIC repo. Source code is
+    visible; app is gated by login + town invite code.
+  - Write tool rejects content starting with "{" — JSON files were
+    written via PowerShell Set-Content instead.
+  - vite.config.ts base path = "/TNP_PQ_CRD/" (matches GitHub repo).
+  - supabase CLI not on PATH globally. Lives at
+    %USERPROFILE%\.supabase-cli\supabase.exe.
+  - supabase login is non-TTY blocked here; used SUPABASE_ACCESS_TOKEN
+    env var instead.
+  - pgcrypto in Supabase lives in `extensions` schema. Must call
+    extensions.gen_random_bytes(...), not bare gen_random_bytes.
+  - supabase db push requires --linked flag in current CLI version.
+
+Approvals Granted:
+  G1 Platform: Web app only (React + Vite).
+  G2 Directory: Cloud-synced via Supabase.
+  G3 Visuals: Hybrid parchment base + woodcut ritual art.
+  G4 Audio: Ship default sound pack.
+  G5 Print: Browser PDF export with bleed + cut lines.
+  Host: Public repo on GitHub Pages, login-gated app.
+  Scope: Web only, no Electron.
+
+Supabase project ref: qygxgownctboypqfhzan
+Supabase URL: https://qygxgownctboypqfhzan.supabase.co
+GitHub repo: https://github.com/VladTheMooseMan/TNP_PQ_CRD
+
+LAWS IN EFFECT:
+- 300 target / 500 hard cap lines per script.
+- Prose variable names.
+- DEBUG logs at entry/exit/key gates.
+- Header manifest + ASCII flowchart + docstrings mandatory.
+- Update this file and Dictionary.txt after every code change.
+- Never full-scan codebase; consult Dictionary.txt first.
+
+NEXT STEPS FOR USER:
+1. npm install
+2. npm run dev   (opens http://localhost:5173)
+3. On first sign-in you must also seed a town. Fastest path: open
+   Supabase SQL editor and insert a row into `towns`, then a row
+   into `town_members` linking yourself, then an `invites` row for
+   other players.
+4. Create empty GitHub repo at https://github.com/VladTheMooseMan/TNP_PQ_CRD
+5. Add Actions secrets VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.
+6. git add . && git commit -m "initial scaffold" && git push -u origin main
