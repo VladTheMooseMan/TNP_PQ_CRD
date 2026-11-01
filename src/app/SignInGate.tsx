@@ -11,6 +11,19 @@ import { send_magic_link, redeem_invite_code, dev_sign_in_with_password } from "
 
 const dev_login_is_enabled = import.meta.env.VITE_DEV_LOGIN_ENABLED === "true";
 
+/* Convert any thrown value into a readable sentence for the status line. */
+function describe_error(thrown_value_from_catch: unknown): string {
+  if (thrown_value_from_catch instanceof Error) return thrown_value_from_catch.message;
+  if (typeof thrown_value_from_catch === "string") return thrown_value_from_catch;
+  if (thrown_value_from_catch && typeof thrown_value_from_catch === "object") {
+    const possibly_message = (thrown_value_from_catch as { message?: string; error_description?: string }).message
+      ?? (thrown_value_from_catch as { error_description?: string }).error_description;
+    if (possibly_message) return possibly_message;
+    try { return JSON.stringify(thrown_value_from_catch); } catch { /* fallthrough */ }
+  }
+  return "Unknown error.";
+}
+
 /* Woodcut-style corner fleuron. One SVG, flipped by CSS. */
 function CornerOrnament({ corner_position_class_name }: { corner_position_class_name: string }) {
   return (
@@ -41,7 +54,7 @@ export default function SignInGate() {
       await send_magic_link(email_entered_by_user);
       set_status_message_for_user("A sealed letter was sent to your inbox.");
     } catch (unexpected_error) {
-      set_status_message_for_user(String(unexpected_error));
+      set_status_message_for_user(describe_error(unexpected_error));
     }
   }
 
@@ -51,7 +64,7 @@ export default function SignInGate() {
       await redeem_invite_code(invite_code_entered_by_user);
       set_status_message_for_user("You are now bound to the town.");
     } catch (unexpected_error) {
-      set_status_message_for_user(String(unexpected_error));
+      set_status_message_for_user(describe_error(unexpected_error));
     }
   }
 
@@ -61,7 +74,7 @@ export default function SignInGate() {
       await dev_sign_in_with_password(dev_email_entered_by_user, dev_password_entered_by_user);
       set_status_message_for_user("Dev session active.");
     } catch (unexpected_error) {
-      set_status_message_for_user(String(unexpected_error));
+      set_status_message_for_user(describe_error(unexpected_error));
     }
   }
 
