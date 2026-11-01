@@ -1,39 +1,268 @@
 /* ============================================================
    FILE: src/app/theme.css
-   PURPOSE: Parchment + candlelight + woodcut design tokens.
+   PURPOSE: Parchment + candlelight + woodcut design tokens
+            + atmospheric background + reusable charter frame.
    ------------------------------------------------------------
    ASCII FLOW:
-     :root tokens -> global body -> component classes consume
+     :root tokens -> body ambience -> charter frame -> inputs/buttons
    ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+DW+Pica+SC&family=UnifrakturCook:wght@700&display=swap");
+
 :root {
-  --parchment-base: #e9d9b2;
-  --parchment-shadow: #b89a6a;
+  --parchment-base: #e4d2a4;
+  --parchment-highlight: #f1e3bb;
+  --parchment-shadow: #8b7246;
+  --parchment-stain: rgba(74, 44, 20, 0.18);
   --ink-black: #1a140d;
+  --ink-faded: #4a3a26;
   --ink-blood: #6a0e0e;
   --ink-bone: #ede3cc;
   --candle-glow: #f4c56a;
+  --candle-glow-dim: rgba(244, 197, 106, 0.35);
   --wax-red: #7a1818;
+  --wax-red-dark: #4a0a0a;
   --woodcut-stroke: #2a1d10;
+  --iron-dark: #2b2622;
+  --iron-mid: #4a403a;
   --font-charter: "IM Fell English", "Cormorant Garamond", Georgia, serif;
   --font-ritual: "UnifrakturCook", "Luminari", serif;
+  --font-smallcaps: "IM Fell DW Pica SC", "IM Fell English", Georgia, serif;
 }
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
 
 body {
   margin: 0;
-  background: radial-gradient(circle at 50% 40%, #2b1f12 0%, #0b0804 90%);
   color: var(--ink-black);
   font-family: var(--font-charter);
+  /* Dark chapel: layered radial glow + heavy vignette */
+  background:
+    radial-gradient(ellipse at 50% 35%, rgba(244, 197, 106, 0.10) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 60%, #2a1d10 0%, #0a0603 70%),
+    #040201;
+  background-attachment: fixed;
+  overflow-x: hidden;
 }
 
+/* Flickering candlelight haze over the whole page */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 30%, var(--candle-glow-dim) 0%, transparent 45%);
+  mix-blend-mode: screen;
+  animation: candle-flicker 5s ease-in-out infinite;
+  z-index: 0;
+}
+
+/* Faint falling-dust / drifting-ember particles via gradient noise */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(244, 197, 106, 0.6), transparent 100%),
+    radial-gradient(1px 1px at 70% 60%, rgba(244, 197, 106, 0.4), transparent 100%),
+    radial-gradient(1px 1px at 40% 80%, rgba(244, 197, 106, 0.5), transparent 100%),
+    radial-gradient(1px 1px at 85% 20%, rgba(244, 197, 106, 0.3), transparent 100%);
+  opacity: 0.6;
+  animation: ember-drift 18s linear infinite;
+  z-index: 0;
+}
+
+@keyframes candle-flicker {
+  0%, 100% { opacity: 1; }
+  18%      { opacity: 0.82; }
+  32%      { opacity: 1; }
+  50%      { opacity: 0.72; }
+  67%      { opacity: 0.95; }
+  83%      { opacity: 0.88; }
+}
+
+@keyframes ember-drift {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-40px); }
+}
+
+/* ============================================================
+   LAYOUT CONTAINERS
+   ============================================================ */
+
 .parchment-splash {
+  position: relative;
+  z-index: 1;
   min-height: 100vh;
   display: grid;
   place-items: center;
-  color: var(--candle-glow);
-  font-family: var(--font-ritual);
-  font-size: 1.4rem;
-  letter-spacing: 0.05em;
+  padding: 2rem 1rem;
 }
+
+/* Main parchment: aged paper + stains + burned border */
+.parchment-sheet {
+  position: relative;
+  background:
+    radial-gradient(ellipse at 15% 10%, var(--parchment-stain) 0%, transparent 35%),
+    radial-gradient(ellipse at 85% 85%, var(--parchment-stain) 0%, transparent 40%),
+    radial-gradient(ellipse at 60% 50%, var(--parchment-highlight) 0%, var(--parchment-base) 70%);
+  border: 1px solid var(--parchment-shadow);
+  padding: 2.5rem 2.5rem 2rem;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.3) inset,
+    0 0 40px 10px rgba(244, 197, 106, 0.08),
+    0 20px 60px rgba(0, 0, 0, 0.7);
+  /* Torn/ragged top & bottom edges */
+  clip-path: polygon(
+    0 2%, 3% 0, 15% 1%, 28% 0, 42% 1%, 58% 0, 72% 1%, 88% 0, 97% 2%, 100% 0,
+    100% 98%, 97% 100%, 85% 99%, 70% 100%, 55% 99%, 40% 100%, 25% 99%, 10% 100%, 2% 98%, 0 100%
+  );
+}
+
+/* Decorative inner rule — a double-line charter frame */
+.parchment-sheet::before {
+  content: "";
+  position: absolute;
+  inset: 0.6rem;
+  border: 1px solid var(--ink-faded);
+  outline: 1px solid var(--ink-faded);
+  outline-offset: -4px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Fleuron corner ornaments */
+.parchment-sheet > .corner-ornament {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  color: var(--ink-faded);
+  opacity: 0.85;
+  pointer-events: none;
+}
+.corner-ornament.tl { top: 10px; left: 10px; }
+.corner-ornament.tr { top: 10px; right: 10px; transform: scaleX(-1); }
+.corner-ornament.bl { bottom: 10px; left: 10px; transform: scaleY(-1); }
+.corner-ornament.br { bottom: 10px; right: 10px; transform: scale(-1, -1); }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+
+.charter-title {
+  font-family: var(--font-ritual);
+  color: var(--ink-blood);
+  font-size: 2.4rem;
+  text-align: center;
+  margin: 0 0 0.25rem;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 0 rgba(255, 220, 170, 0.4);
+}
+
+.charter-subtitle {
+  font-family: var(--font-smallcaps);
+  text-align: center;
+  color: var(--ink-faded);
+  font-size: 0.85rem;
+  letter-spacing: 0.3em;
+  margin: 0 0 1.5rem;
+  text-transform: uppercase;
+}
+
+.charter-rule {
+  border: 0;
+  height: 24px;
+  margin: 1.25rem auto;
+  width: 85%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 24'><path d='M0 12 L80 12 M120 12 L200 12 M100 4 L104 8 L108 4 L104 0 Z M100 24 L104 20 L108 24 L104 28 Z M100 4 L104 12 L108 4 M100 20 L104 12 L108 20' stroke='%234a3a26' stroke-width='1' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.charter-field-label {
+  font-family: var(--font-smallcaps);
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ink-faded);
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+/* ============================================================
+   INPUTS
+   ============================================================ */
+
+.charter-input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--ink-faded);
+  padding: 0.5rem 0.25rem;
+  font-family: var(--font-charter);
+  font-size: 1.05rem;
+  color: var(--ink-black);
+  outline: none;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+.charter-input::placeholder {
+  color: var(--ink-faded);
+  opacity: 0.55;
+  font-style: italic;
+}
+.charter-input:focus {
+  border-bottom-color: var(--ink-blood);
+  background: linear-gradient(to top, rgba(106, 14, 14, 0.06), transparent 60%);
+}
+
+/* ============================================================
+   BUTTONS — forged iron with wax seal accent
+   ============================================================ */
+
+.iron-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.3rem;
+  background: linear-gradient(180deg, var(--iron-mid) 0%, var(--iron-dark) 100%);
+  color: var(--ink-bone);
+  border: 1px solid #0f0b08;
+  border-radius: 2px;
+  font-family: var(--font-smallcaps);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow:
+    0 1px 0 rgba(255, 220, 170, 0.08) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.5) inset,
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: filter 180ms ease, box-shadow 180ms ease, transform 80ms ease;
+}
+.iron-button:hover {
+  filter: brightness(1.15);
+  box-shadow:
+    0 1px 0 rgba(255, 220, 170, 0.12) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.5) inset,
+    0 0 18px 2px rgba(244, 197, 106, 0.35),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+.iron-button:active { transform: translateY(1px); }
+
+.iron-button.primary {
+  background: linear-gradient(180deg, #8a2020 0%, var(--wax-red-dark) 100%);
+  border-color: #2a0505;
+}
+
+/* ============================================================
+   LEGACY candle-hover kept for ambient non-button targets
+   ============================================================ */
 
 .candle-hover {
   transition: box-shadow 180ms ease, filter 180ms ease;
@@ -43,10 +272,23 @@ body {
   filter: brightness(1.08);
 }
 
-.parchment-sheet {
-  background: var(--parchment-base);
-  background-image: radial-gradient(circle at 20% 10%, rgba(0,0,0,0.08) 0%, transparent 40%);
-  border: 1px solid var(--parchment-shadow);
-  box-shadow: 0 0 60px rgba(0,0,0,0.5);
-  padding: 2rem;
+/* ============================================================
+   FORM STACK
+   ============================================================ */
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.75rem;
+  align-items: end;
+  margin-bottom: 1.1rem;
+}
+
+.status-line {
+  min-height: 1.2em;
+  text-align: center;
+  font-style: italic;
+  color: var(--ink-faded);
+  margin: 0.75rem 0 0;
+  font-size: 0.95rem;
 }
