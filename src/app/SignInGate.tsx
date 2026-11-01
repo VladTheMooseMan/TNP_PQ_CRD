@@ -7,7 +7,9 @@
 //      -> auth session -> enter invite code -> join town
 // ============================================================
 import { useState } from "react";
-import { send_magic_link, redeem_invite_code } from "../lib/auth";
+import { send_magic_link, redeem_invite_code, dev_sign_in_with_password } from "../lib/auth";
+
+const dev_login_is_enabled = import.meta.env.VITE_DEV_LOGIN_ENABLED === "true";
 
 /* Woodcut-style corner fleuron. One SVG, flipped by CSS. */
 function CornerOrnament({ corner_position_class_name }: { corner_position_class_name: string }) {
@@ -30,6 +32,8 @@ export default function SignInGate() {
   const [email_entered_by_user, set_email_entered_by_user] = useState("");
   const [invite_code_entered_by_user, set_invite_code_entered_by_user] = useState("");
   const [status_message_for_user, set_status_message_for_user] = useState("");
+  const [dev_email_entered_by_user, set_dev_email_entered_by_user] = useState("");
+  const [dev_password_entered_by_user, set_dev_password_entered_by_user] = useState("");
 
   async function handle_send_magic_link_click() {
     console.log("[DEBUG][SignInGate] send magic link");
@@ -46,6 +50,16 @@ export default function SignInGate() {
     try {
       await redeem_invite_code(invite_code_entered_by_user);
       set_status_message_for_user("You are now bound to the town.");
+    } catch (unexpected_error) {
+      set_status_message_for_user(String(unexpected_error));
+    }
+  }
+
+  async function handle_dev_password_sign_in_click() {
+    console.log("[DEBUG][SignInGate] dev password sign-in");
+    try {
+      await dev_sign_in_with_password(dev_email_entered_by_user, dev_password_entered_by_user);
+      set_status_message_for_user("Dev session active.");
     } catch (unexpected_error) {
       set_status_message_for_user(String(unexpected_error));
     }
@@ -96,6 +110,45 @@ export default function SignInGate() {
         </div>
 
         <p className="status-line">{status_message_for_user}</p>
+
+        {dev_login_is_enabled && (
+          <>
+            <hr className="charter-rule" />
+            <p className="charter-subtitle" style={{ color: "var(--ink-blood)", margin: 0 }}>
+              Scribe's Backdoor
+            </p>
+            <label className="charter-field-label" htmlFor="dev_email_input" style={{ marginTop: "0.75rem" }}>
+              Dev Account
+            </label>
+            <input
+              id="dev_email_input"
+              className="charter-input"
+              value={dev_email_entered_by_user}
+              onChange={(e) => set_dev_email_entered_by_user(e.target.value)}
+              placeholder="dev@local"
+              type="email"
+              autoComplete="email"
+              style={{ marginBottom: "0.75rem" }}
+            />
+            <label className="charter-field-label" htmlFor="dev_password_input">
+              Passphrase
+            </label>
+            <div className="form-row">
+              <input
+                id="dev_password_input"
+                className="charter-input"
+                value={dev_password_entered_by_user}
+                onChange={(e) => set_dev_password_entered_by_user(e.target.value)}
+                placeholder="dev password"
+                type="password"
+                autoComplete="current-password"
+              />
+              <button className="iron-button" onClick={handle_dev_password_sign_in_click}>
+                Dev Sign In
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

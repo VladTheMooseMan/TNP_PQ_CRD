@@ -12,10 +12,26 @@
 //   <AmbiencePlayer/> + <AppRoutes/>
 // ============================================================
 import { useEffect, useState } from "react";
-import { subscribe_to_auth_state, get_current_session } from "../lib/auth";
+import { subscribe_to_auth_state, get_current_session, sign_out_current_session } from "../lib/auth";
 import { start_ambience_loop } from "../lib/audio_ambience";
 import AppRoutes from "./routes";
 import SignInGate from "./SignInGate";
+
+function SignOutCorner() {
+  async function handle_sign_out_click() {
+    console.log("[DEBUG][App] sign out click");
+    await sign_out_current_session();
+  }
+  return (
+    <button
+      className="iron-button"
+      onClick={handle_sign_out_click}
+      style={{ position: "fixed", top: 12, right: 12, zIndex: 10 }}
+    >
+      Sign Out
+    </button>
+  );
+}
 
 export default function App() {
   const [current_user_is_signed_in, set_current_user_is_signed_in] = useState<boolean | null>(null);
@@ -38,5 +54,10 @@ export default function App() {
 
   if (current_user_is_signed_in === null) return <div className="parchment-splash">Lighting the candles...</div>;
   if (!current_user_is_signed_in) return <SignInGate />;
-  return <AppRoutes />;
+  return (
+    <>
+      <SignOutCorner />
+      <AppRoutes />
+    </>
+  );
 }

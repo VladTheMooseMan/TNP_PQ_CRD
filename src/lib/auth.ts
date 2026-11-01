@@ -16,6 +16,27 @@ export async function send_magic_link(email_address: string) {
   if (unexpected_error) throw unexpected_error;
 }
 
+// ------------------------------------------------------------
+// Dev-only password sign-in. Guarded by VITE_DEV_LOGIN_ENABLED
+// so the button never ships to prod unless you explicitly set
+// that flag at build time. The user still has to exist in
+// Supabase Auth with a real password.
+// ------------------------------------------------------------
+export async function dev_sign_in_with_password(email_address: string, password_string: string) {
+  console.log("[DEBUG][auth] dev_sign_in_with_password");
+  const { error: unexpected_error } = await supabase_client_singleton.auth.signInWithPassword({
+    email: email_address,
+    password: password_string,
+  });
+  if (unexpected_error) throw unexpected_error;
+}
+
+export async function sign_out_current_session() {
+  console.log("[DEBUG][auth] sign_out_current_session");
+  const { error: unexpected_error } = await supabase_client_singleton.auth.signOut();
+  if (unexpected_error) throw unexpected_error;
+}
+
 export async function get_current_session() {
   console.log("[DEBUG][auth] get_current_session");
   const { data: session_wrapper } = await supabase_client_singleton.auth.getSession();
